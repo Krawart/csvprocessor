@@ -39,7 +39,7 @@ public class ApplicationProperties {
     if (Objects.nonNull(fileTypeSpec)) {
       FileType type;
       try {
-        type = FileType.valueOf(fileTypeSpec.toLowerCase());
+        type = FileType.valueOf(fileTypeSpec.toUpperCase());
       } catch (IllegalArgumentException e) {
         exitWithMessageAndStatusCode(
           "FileType (" + properties.get("fileType") + ") is not in supported\n" +

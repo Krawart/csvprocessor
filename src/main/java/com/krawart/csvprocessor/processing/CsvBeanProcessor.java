@@ -1,7 +1,7 @@
 package com.krawart.csvprocessor.processing;
 
 import com.krawart.csvprocessor.beans.CsvBean;
-import com.krawart.csvprocessor.csv.rows.DataRow;
+import com.krawart.csvprocessor.csv.rows.RowData;
 import com.krawart.csvprocessor.enums.FileType;
 import com.krawart.csvprocessor.exceptions.CsvDataMappingException;
 import com.krawart.csvprocessor.exceptions.InputFileNotFoundException;
@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 import static com.krawart.csvprocessor.Application.INPUT_DIRECTORY_PATH;
 import static com.krawart.csvprocessor.Application.OUTPUT_DIRECTORY_PATH;
 
-public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends DataRow> {
+public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R>> {
   private static final String DEFAULT_FILENAME = "data.csv";
   protected final Logger log = Logger.getLogger(this.getClass().getName());
   protected Class<T> beanType;
@@ -44,8 +44,10 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends DataRow> 
 
     List<T> beans = readAll(filename);
 
-    List<R> analyzedBeans = analyzeBeans(beans);
+    log.info("Analyzing data from " + INPUT_DIRECTORY_PATH + " directory.");
+    List<R> analyzedBeans = processBeans(beans);
 
+    log.info("Exporting file to " + OUTPUT_DIRECTORY_PATH + " directory.");
     int status;
     switch (properties.getFileType()) {
       case CSV:
@@ -65,6 +67,7 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends DataRow> 
           "Application properties contents unsupported value " + properties.getFileType().getType() +
             " with value " + properties.getFileType());
     }
+    log.info("Export of analyzed data to " + OUTPUT_DIRECTORY_PATH + " directory was successful.");
     return status;
   }
 
@@ -90,7 +93,7 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends DataRow> 
     }
   }
 
-  protected abstract List<R> analyzeBeans(List<T> beans);
+  protected abstract List<R> processBeans(List<T> beans);
 
   /**
    * This method will be called when ApplicationProperties contains ".csv" fileType property. This is also default
@@ -123,6 +126,7 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends DataRow> 
   protected int exportToHtml(List<R> analyzedBeans, String filename) {
     return 0; // TODO = implementation is missing
   }
+
 
   /**
    * This method will be called when ApplicationProperties contains ".xls" fileType property

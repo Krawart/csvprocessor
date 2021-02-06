@@ -1,23 +1,38 @@
-package com.krawart.csvprocessor.csv.rows;
+package com.krawart.csvprocessor.csv.pojos;
 
-import com.krawart.csvprocessor.beans.MarketShare;
+import com.krawart.csvprocessor.beans.MarketShareInput;
 import com.krawart.csvprocessor.enums.Quarter;
 
 import java.util.Objects;
 
-public class MarketShareRow implements DataRow {
+public class MarketShareData {
   private final String vendorName;
   private final String country;
-  private final int soldUnits;
+  private final long soldUnits;
   private final Quarter quarter;
   private final int year;
 
-  private MarketShareRow(Builder builder) {
+  private MarketShareData(Builder builder) {
     this.vendorName = builder.vendorName;
     this.country = builder.country;
     this.soldUnits = builder.soldUnits;
     this.quarter = builder.quarter;
     this.year = builder.year;
+  }
+
+  public static MarketShareData ofMarketShare(MarketShareInput bean) {
+    return new Builder()
+      .vendorName(bean.getVendor())
+      .country(bean.getCountry())
+      .soldUnits(getNormalizeSoldUnitsInputData(bean.getUnits()))
+      .quarter(bean.getTimescale().getQuarter())
+      .year(bean.getTimescale().getYear())
+      .build();
+  }
+
+  private static long getNormalizeSoldUnitsInputData(String units) {
+    units = units.replace(".", "");
+    return Long.parseUnsignedLong(units);
   }
 
   public String getVendorName() {
@@ -28,7 +43,7 @@ public class MarketShareRow implements DataRow {
     return country;
   }
 
-  public int getSoldUnits() {
+  public long getSoldUnits() {
     return soldUnits;
   }
 
@@ -40,22 +55,12 @@ public class MarketShareRow implements DataRow {
     return year;
   }
 
-  public static MarketShareRow ofMarketShare(MarketShare bean) {
-    return new Builder()
-      .vendorName(bean.getVendor())
-      .country(bean.getCountry())
-      .soldUnits(bean.getUnits())
-      .quarter(bean.getQuarter().getQuarter())
-      .year(bean.getQuarter().getYear())
-      .build();
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof MarketShareRow)) return false;
+    if (!(o instanceof MarketShareData)) return false;
 
-    MarketShareRow that = (MarketShareRow) o;
+    MarketShareData that = (MarketShareData) o;
 
     if (soldUnits != that.soldUnits) return false;
     if (year != that.year) return false;
@@ -72,7 +77,7 @@ public class MarketShareRow implements DataRow {
     result = 31 * result + (country != null
       ? country.hashCode()
       : 0);
-    result = 31 * result + soldUnits;
+    result = 31 * result + (int) (soldUnits ^ (soldUnits >>> 32));
     result = 31 * result + (quarter != null
       ? quarter.hashCode()
       : 0);
@@ -83,7 +88,7 @@ public class MarketShareRow implements DataRow {
   public static class Builder {
     private String vendorName;
     private String country;
-    private int soldUnits;
+    private long soldUnits;
     private Quarter quarter;
     private int year;
 
@@ -101,7 +106,7 @@ public class MarketShareRow implements DataRow {
       return this;
     }
 
-    public Builder soldUnits(int value) {
+    public Builder soldUnits(long value) {
       soldUnits = value;
       return this;
     }
@@ -116,8 +121,8 @@ public class MarketShareRow implements DataRow {
       return this;
     }
 
-    public MarketShareRow build() {
-      return new MarketShareRow(this);
+    public MarketShareData build() {
+      return new MarketShareData(this);
     }
   }
 }

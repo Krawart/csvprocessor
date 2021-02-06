@@ -3,7 +3,7 @@ package com.krawart.csvprocessor;
 import com.krawart.csvprocessor.beans.CsvBean;
 import com.krawart.csvprocessor.processing.CsvBeanProcessor;
 import com.krawart.csvprocessor.processing.impl.MarketShareCsvProcessor;
-import com.krawart.csvprocessor.csv.rows.DataRow;
+import com.krawart.csvprocessor.csv.rows.RowData;
 import com.krawart.csvprocessor.utils.ApplicationProperties;
 
 import java.io.File;
@@ -13,7 +13,7 @@ public class Application {
   /*
    * APPLICATION SETTINGS
    * */
-  private static final String ABSOLUTE_PATH = new File("").getAbsolutePath();
+  public static final String ABSOLUTE_PATH = new File("").getAbsolutePath();
   public static final String INPUT_DIRECTORY_PATH = ABSOLUTE_PATH + "/input/";
   public static final String OUTPUT_DIRECTORY_PATH = ABSOLUTE_PATH + "/output/";
   private static final Logger log = Logger.getLogger(Application.class.getName());
@@ -22,7 +22,7 @@ public class Application {
     System.out.println(INPUT_DIRECTORY_PATH);
     ApplicationProperties properties = ApplicationProperties.ofArgs(args);
 
-    CsvBeanProcessor<? extends CsvBean<?>, ? extends DataRow> converter;
+    CsvBeanProcessor<? extends CsvBean<?>, ? extends RowData> converter;
     switch (properties.getDataType()) {
       case 0:
         converter = new MarketShareCsvProcessor();
