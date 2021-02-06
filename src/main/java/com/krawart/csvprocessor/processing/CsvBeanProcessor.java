@@ -17,6 +17,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import java.io.*;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -26,9 +27,9 @@ import static com.krawart.csvprocessor.utils.FileIOUtils.OUTPUT_DIRECTORY_PATH;
 
 public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R>> {
   private static final String DEFAULT_FILENAME = "data.csv";
-  private static final String EXPORT_NOT_IMPLEMENTED = " was almost created.\nNot implemented yet.";
+  private static final String EXPORT_NOT_IMPLEMENTED = " was almost created.\nDefault export not implemented yet.\n";
   protected final Logger log = Logger.getLogger(this.getClass().getName());
-  protected Class<T> beanType;
+  protected final Class<T> beanType;
 
   protected CsvBeanProcessor(Class<T> beanType) {
     this.beanType = beanType;
@@ -68,7 +69,12 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R
           "Application properties contents unsupported value " + properties.getFileType().getType() +
             " with value " + properties.getFileType());
     }
-    log.info("Export of analyzed data to " + OUTPUT_DIRECTORY_PATH + " directory was successful.");
+
+    if (status == 0) {
+      log.info("Data was exported to " + OUTPUT_DIRECTORY_PATH +
+        getOutputFilename(filename, properties.getFileType()));
+    }
+
     return status;
   }
 
@@ -125,8 +131,10 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R
    * @return Exit Status code;
    */
   protected int exportToHtml(List<R> analyzedBeans, String filename) {
-    log.info("Html file with name " + getOutputFilename(filename, FileType.XLSX) + EXPORT_NOT_IMPLEMENTED);
-    return 0; // TODO = implementation is missing
+    String dataToPrint = Arrays.toString(analyzedBeans.toArray());
+    log.info(dataToPrint);
+    log.info("\nHtml file with name " + getOutputFilename(filename, FileType.XLSX) + EXPORT_NOT_IMPLEMENTED);
+    return 1; // TODO = default implementation is missing
   }
 
 
@@ -137,8 +145,10 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R
    * @return Exit Status code;
    */
   protected int exportToXls(List<R> analyzedBeans, String filename) {
-    log.info("Xls file with name " + getOutputFilename(filename, FileType.XLS) + EXPORT_NOT_IMPLEMENTED);
-    return 0; // TODO = implementation is missing
+    String dataToPrint = Arrays.toString(analyzedBeans.toArray());
+    log.info(dataToPrint);
+    log.info("\nXls file with name " + getOutputFilename(filename, FileType.XLS) + EXPORT_NOT_IMPLEMENTED);
+    return 1; // TODO = default implementation is missing
   }
 
   /**
@@ -148,16 +158,10 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R
    * @return Exit Status code;
    */
   protected int exportToXlsx(List<R> analyzedBeans, String filename) {
-    log.info("Xlsx file with name " + getOutputFilename(filename, FileType.XLSX) + EXPORT_NOT_IMPLEMENTED);
-    return 0; // TODO = implementation is missing
-  }
-
-
-  private String getFilename(String filename) {
-    if (Objects.isNull(filename) || filename.isBlank()) {
-      return DEFAULT_FILENAME;
-    }
-    return filename;
+    String dataToPrint = Arrays.toString(analyzedBeans.toArray());
+    log.info(dataToPrint);
+    log.info("\nXlsx file with name " + getOutputFilename(filename, FileType.XLSX) + EXPORT_NOT_IMPLEMENTED);
+    return 1; // TODO = default implementation is missing
   }
 
   private String getOutputFilename(String filename, FileType fileType) {
@@ -168,6 +172,13 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R
      * */
     String name = filename.substring(0, filename.length() - 4);
 
-    return now + name + fileType.getType();
+    return now + "_" + name + fileType.getType();
+  }
+
+  private String getFilename(String filename) {
+    if (Objects.isNull(filename) || filename.isBlank()) {
+      return DEFAULT_FILENAME;
+    }
+    return filename;
   }
 }

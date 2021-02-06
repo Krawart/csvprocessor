@@ -4,11 +4,8 @@ import com.krawart.csvprocessor.csv.pojos.Timescale;
 import com.krawart.csvprocessor.enums.Quarter;
 import com.opencsv.bean.AbstractBeanField;
 
+@SuppressWarnings("unused")
 public class QuarterConverter extends AbstractBeanField<Timescale, String> {
-
-  public QuarterConverter() {
-    super();
-  }
 
   @Override
   protected Object convert(String value) {

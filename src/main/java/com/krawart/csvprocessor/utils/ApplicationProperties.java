@@ -43,8 +43,7 @@ public class ApplicationProperties {
       } catch (IllegalArgumentException e) {
         exitWithMessageAndStatusCode(
           "FileType (" + properties.get("fileType") + ") is not in supported\n" +
-            "Supported values: " + Arrays.toString(FileType.values()),
-          1);
+            "Supported values: " + Arrays.toString(FileType.values()));
         return;
       }
       this.fileType = type;
@@ -62,21 +61,9 @@ public class ApplicationProperties {
     }
   }
 
-  private static void exitWithMessageAndStatusCode(String message, int exitCode) {
+  private static void exitWithMessageAndStatusCode(String message) {
     logger.warning(message);
-    System.exit(exitCode);
-  }
-
-  public static boolean getIntegerValue(String strNum) {
-    if (strNum == null) {
-      return false;
-    }
-    try {
-      Integer.parseInt(strNum);
-    } catch (NumberFormatException nfe) {
-      return false;
-    }
-    return true;
+    System.exit(-1);
   }
 
   public static ApplicationProperties ofArgs(String[] args) {
@@ -87,8 +74,7 @@ public class ApplicationProperties {
     ApplicationProperties properties = getApplicationProperties(args);
     if (!isCsvFileName(properties.filename)) {
       exitWithMessageAndStatusCode(
-        "Filename (" + properties.filename + ") is not in correct format => 'your-file-name.csv'",
-        1);
+        "Filename (" + properties.filename + ") is not in correct format => 'your-file-name.csv'");
     }
     return properties;
   }
@@ -101,7 +87,7 @@ public class ApplicationProperties {
       if (keyAndValue.length == 2) {
         properties.put(keyAndValue[ 0 ], keyAndValue[ 1 ]);
       } else {
-        exitWithMessageAndStatusCode("Invalid argument specification given on index " + i + ".", 1);
+        exitWithMessageAndStatusCode("Invalid argument specification given on index " + i + ".");
       }
     }
 

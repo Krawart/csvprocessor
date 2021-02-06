@@ -2,6 +2,8 @@ package com.krawart.csvprocessor.csv.rows;
 
 import com.opencsv.bean.CsvBindByName;
 
+import java.util.StringJoiner;
+
 public class MarketShareOutput implements RowData<MarketShareOutput> {
   @CsvBindByName
   private final String vendor;
@@ -36,11 +38,21 @@ public class MarketShareOutput implements RowData<MarketShareOutput> {
     return units;
   }
 
+  @SuppressWarnings("unused")
   public int compareVendorTo(MarketShareOutput o) {
     return this.getVendor().compareTo(o.getVendor());
   }
 
   public String getVendor() {
     return vendor;
+  }
+
+  @Override
+  public String toString() {
+    return new StringJoiner(", ", "\n" + MarketShareOutput.class.getSimpleName() + "[", "]")
+      .add("vendor='" + vendor + "'")
+      .add("units=" + units)
+      .add("share=" + share)
+      .toString();
   }
 }

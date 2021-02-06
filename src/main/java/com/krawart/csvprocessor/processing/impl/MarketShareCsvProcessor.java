@@ -15,13 +15,17 @@ import java.util.stream.Collectors;
 
 public class MarketShareCsvProcessor extends CsvBeanProcessor<MarketShareInput, MarketShareOutput> {
 
-  /*
-   * Filter parameters = could be refactored to be parsed by run arguments
-   * */
   private final String country;
   private final int year;
   private final Quarter quarter;
 
+  /**
+   * Filter parameters = should be refactored to be parsed as runtime arguments
+   *
+   * @param country filter results by country
+   * @param year    filter results by year
+   * @param quarter filter results by quarter
+   */
   public MarketShareCsvProcessor(String country, int year, Quarter quarter) {
     super(MarketShareInput.class);
     this.country = country;
@@ -34,12 +38,12 @@ public class MarketShareCsvProcessor extends CsvBeanProcessor<MarketShareInput, 
 
     String html = FileIOUtils.readHtmlTemplate();
 
-    String title = "MarketShareTable";
-
-
-    html = html.replace("$title", title);
+    html = html.replace("$title", "MarketShareTable");
     html = html.replace("$body", buildHtmlTable(analyzedBeans));
-    return FileIOUtils.writeHtmlDocument(filename, html);
+
+    FileIOUtils.writeHtmlDocument(filename, html);
+
+    return 0;
   }
 
   private String buildHtmlTable(List<MarketShareOutput> analyzedBeans) {

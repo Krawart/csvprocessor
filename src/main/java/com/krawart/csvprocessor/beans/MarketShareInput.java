@@ -5,6 +5,7 @@ import com.krawart.csvprocessor.csv.pojos.Timescale;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
 
+@SuppressWarnings("unused")
 public class MarketShareInput implements CsvBean<MarketShareInput> {
 
   @CsvBindByName(column = "Country")

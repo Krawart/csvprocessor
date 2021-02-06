@@ -37,7 +37,7 @@ public interface FileIOUtils {
     return sb.toString();
   }
 
-  static int writeHtmlDocument(String filename, String html) {
+  static void writeHtmlDocument(String filename, String html) {
     File newHtmlFile = new File(OUTPUT_DIRECTORY_PATH + getOutputFilename(filename, FileType.HTML));
 
     FileWriter fileWriter;
@@ -48,7 +48,6 @@ public interface FileIOUtils {
     } catch (IOException e) {
       throw new WriteOperationException("Problem when tried to save html export to " + newHtmlFile.getAbsolutePath());
     }
-    return 0;
   }
 
   static String getOutputFilename(String filename, FileType fileType) {
