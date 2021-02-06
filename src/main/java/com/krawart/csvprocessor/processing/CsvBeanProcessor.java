@@ -21,11 +21,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-import static com.krawart.csvprocessor.Application.INPUT_DIRECTORY_PATH;
-import static com.krawart.csvprocessor.Application.OUTPUT_DIRECTORY_PATH;
+import static com.krawart.csvprocessor.utils.FileIOUtils.INPUT_DIRECTORY_PATH;
+import static com.krawart.csvprocessor.utils.FileIOUtils.OUTPUT_DIRECTORY_PATH;
 
 public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R>> {
   private static final String DEFAULT_FILENAME = "data.csv";
+  private static final String EXPORT_NOT_IMPLEMENTED = " was almost created.\nNot implemented yet.";
   protected final Logger log = Logger.getLogger(this.getClass().getName());
   protected Class<T> beanType;
 
@@ -44,10 +45,10 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R
 
     List<T> beans = readAll(filename);
 
-    log.info("Analyzing data from " + INPUT_DIRECTORY_PATH + " directory.");
+    log.info("Analyzing data from " + INPUT_DIRECTORY_PATH);
     List<R> analyzedBeans = processBeans(beans);
 
-    log.info("Exporting file to " + OUTPUT_DIRECTORY_PATH + " directory.");
+    log.info("Exporting file to " + OUTPUT_DIRECTORY_PATH);
     int status;
     switch (properties.getFileType()) {
       case CSV:
@@ -124,6 +125,7 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R
    * @return Exit Status code;
    */
   protected int exportToHtml(List<R> analyzedBeans, String filename) {
+    log.info("Html file with name " + getOutputFilename(filename, FileType.XLSX) + EXPORT_NOT_IMPLEMENTED);
     return 0; // TODO = implementation is missing
   }
 
@@ -135,6 +137,7 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R
    * @return Exit Status code;
    */
   protected int exportToXls(List<R> analyzedBeans, String filename) {
+    log.info("Xls file with name " + getOutputFilename(filename, FileType.XLS) + EXPORT_NOT_IMPLEMENTED);
     return 0; // TODO = implementation is missing
   }
 
@@ -145,6 +148,7 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R
    * @return Exit Status code;
    */
   protected int exportToXlsx(List<R> analyzedBeans, String filename) {
+    log.info("Xlsx file with name " + getOutputFilename(filename, FileType.XLSX) + EXPORT_NOT_IMPLEMENTED);
     return 0; // TODO = implementation is missing
   }
 

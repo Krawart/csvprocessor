@@ -1,6 +1,5 @@
 package com.krawart.csvprocessor.utils;
 
-import com.krawart.csvprocessor.Application;
 import com.krawart.csvprocessor.enums.FileType;
 import com.krawart.csvprocessor.exceptions.HtmlTemplateNotFoundException;
 import com.krawart.csvprocessor.exceptions.WriteOperationException;
@@ -9,9 +8,12 @@ import java.io.*;
 import java.time.Instant;
 
 public interface FileIOUtils {
+  String ABSOLUTE_PATH = new File("").getAbsolutePath();
+  String INPUT_DIRECTORY_PATH = ABSOLUTE_PATH + "/input/";
+  String OUTPUT_DIRECTORY_PATH = ABSOLUTE_PATH + "/output/";
 
   static String readHtmlTemplate() {
-    File htmlTemplateFile = new File(Application.ABSOLUTE_PATH + "/template.html");
+    File htmlTemplateFile = new File(ABSOLUTE_PATH + "/template.html");
     StringBuilder sb = new StringBuilder();
 
     FileReader fileReader;
@@ -36,7 +38,7 @@ public interface FileIOUtils {
   }
 
   static int writeHtmlDocument(String filename, String html) {
-    File newHtmlFile = new File(Application.OUTPUT_DIRECTORY_PATH + getOutputFilename(filename, FileType.HTML));
+    File newHtmlFile = new File(OUTPUT_DIRECTORY_PATH + getOutputFilename(filename, FileType.HTML));
 
     FileWriter fileWriter;
     try {

@@ -5,7 +5,9 @@ import com.krawart.csvprocessor.csv.rows.MarketShareOutput;
 import com.krawart.csvprocessor.enums.Quarter;
 import com.krawart.csvprocessor.processing.CsvBeanProcessor;
 import com.krawart.csvprocessor.utils.FileIOUtils;
+import com.krawart.csvprocessor.utils.HtmlUtils;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,15 +18,16 @@ public class MarketShareCsvProcessor extends CsvBeanProcessor<MarketShareInput, 
   /*
    * Filter parameters = could be refactored to be parsed by run arguments
    * */
-  private final String country = "Czech Republic";
-  private final int year = 2010;
-  private final Quarter quarter = Quarter.Q4;
+  private final String country;
+  private final int year;
+  private final Quarter quarter;
 
-
-  public MarketShareCsvProcessor() {
+  public MarketShareCsvProcessor(String country, int year, Quarter quarter) {
     super(MarketShareInput.class);
+    this.country = country;
+    this.year = year;
+    this.quarter = quarter;
   }
-
 
   @Override
   protected int exportToHtml(List<MarketShareOutput> analyzedBeans, String filename) {
@@ -32,11 +35,23 @@ public class MarketShareCsvProcessor extends CsvBeanProcessor<MarketShareInput, 
     String html = FileIOUtils.readHtmlTemplate();
 
     String title = "MarketShareTable";
+
+
+    html = html.replace("$title", title);
+    html = html.replace("$body", buildHtmlTable(analyzedBeans));
+    return FileIOUtils.writeHtmlDocument(filename, html);
+  }
+
+  private String buildHtmlTable(List<MarketShareOutput> analyzedBeans) {
     StringBuilder bodyBuilder = new StringBuilder();
 
-    bodyBuilder.append("<table>");
+    bodyBuilder.append("<p>Table 1, PC Quarterly Market Share, the ")
+      .append(country).append(", ").append(quarter).append("-").append(year)
+      .append("</p>");
 
+    bodyBuilder.append("<table>");
     bodyBuilder.append("<thead>");
+    bodyBuilder.append("<th></th>");
     bodyBuilder.append("<th>Vendor</th>");
     bodyBuilder.append("<th>Units</th>");
     bodyBuilder.append("<th>Share</th>");
@@ -44,31 +59,42 @@ public class MarketShareCsvProcessor extends CsvBeanProcessor<MarketShareInput, 
 
     bodyBuilder.append("<tbody>");
 
-    int total = 0;
-    for (MarketShareOutput item : analyzedBeans) {
-      total += item.getUnits();
+    Long total = 0L;
+    MarketShareOutput item;
+    DecimalFormat percentage = new DecimalFormat("###.00");
+    DecimalFormat thousands = new DecimalFormat("###,###");
+    for (int i = 0; i < analyzedBeans.size(); i++) {
+      item = analyzedBeans.get(i);
+
       bodyBuilder.append("<tr>");
-      bodyBuilder.append("<td>").append(item.getVendor()).append("</td>");
-      bodyBuilder.append("<td>").append(item.getUnits()).append("</td>");
-      bodyBuilder.append("<td>").append(item.getShare() * 100).append("%</td>");
+      HtmlUtils.appendTdElement(bodyBuilder, i + 1);
+      HtmlUtils.appendTdElement(bodyBuilder, item.getVendor());
+      HtmlUtils.appendTdElement(bodyBuilder, thousands.format(item.getUnits()));
+      HtmlUtils.appendTdElement(bodyBuilder, percentage.format(item.getShare() * 100));
       bodyBuilder.append("</tr>");
+
+      total += item.getUnits();
     }
 
-    bodyBuilder.append("<tr>");
-    bodyBuilder.append("<td>Total</td>");
-    bodyBuilder.append("<td>").append(total).append("</td>");
-    bodyBuilder.append("<td>100%</td>");
+    bodyBuilder.append("<tr style='background: #FFFF99'>");
+    HtmlUtils.appendTdElement(bodyBuilder, "");
+    HtmlUtils.appendTdElement(bodyBuilder, "Total");
+    HtmlUtils.appendTdElement(bodyBuilder, thousands.format(total));
+    HtmlUtils.appendTdElement(bodyBuilder, (100 + "%")); // Sum of all shares
     bodyBuilder.append("</tr>");
 
     bodyBuilder.append("</tbody>");
     bodyBuilder.append("</table>");
 
-
-    html = html.replace("$title", title);
-    html = html.replace("$body", bodyBuilder.toString());
-    return FileIOUtils.writeHtmlDocument(filename, html);
+    return bodyBuilder.toString();
   }
 
+  /**
+   * Implementation for current dataType
+   *
+   * @param beans Raw data read from csv file
+   * @return Processed data - filtered, merged and sorted
+   */
   @Override
   protected List<MarketShareOutput> processBeans(List<MarketShareInput> beans) {
     Map<String, Long> unitsByVendor = new HashMap<>();
@@ -77,16 +103,25 @@ public class MarketShareCsvProcessor extends CsvBeanProcessor<MarketShareInput, 
     long units;
     for (MarketShareInput bean : getFilteredBeans(beans)) {
       units = getNormalizeSoldUnitsInputData(bean.getUnits());
+
+      // TODO = If multiple records for one filter setup is not possible, exception should be thrown instead merge
       unitsByVendor.merge(
         bean.getVendor(),
         units,
         Long::sum);
+
       totalUnits += units;
     }
 
     return getOutputFromMap(unitsByVendor, totalUnits);
   }
 
+  /**
+   * Helper function to filter input beans along the filter parameters specified, when object is created
+   *
+   * @param beans Raw data read from csv file
+   * @return Filtered data by country, year and quarter
+   */
   private List<MarketShareInput> getFilteredBeans(List<MarketShareInput> beans) {
     return beans.stream()
       .filter(bean ->
@@ -102,18 +137,24 @@ public class MarketShareCsvProcessor extends CsvBeanProcessor<MarketShareInput, 
   }
 
   private List<MarketShareOutput> getOutputFromMap(Map<String, Long> unitsByVendor, final long totalUnits) {
+    if (unitsByVendor == null) throw new IllegalArgumentException("unitsByVendor are null. Process cannot continue");
+
     return unitsByVendor.entrySet().stream()
       .map(entry -> {
         String vendor = entry.getKey();
         long units = entry.getValue();
         return new MarketShareOutput(vendor, units, getShare(units, totalUnits));
       })
+      /*
+       * Can be used instead default compareTo comparator
+       * */
+//      .sorted(MarketShareOutput::compareVendorTo)
       .sorted()
       .collect(Collectors.toList());
   }
 
-  private float getShare(long sold, long sum) {
-    return ((float) sold) / sum;
+  private double getShare(long sold, long sum) {
+    return ((double) sold) / sum;
   }
 
 }

@@ -9,20 +9,16 @@ public class MarketShareOutput implements RowData<MarketShareOutput> {
   @CsvBindByName
   private final long units;
 
-  @CsvBindByName()
-  private final float share;
+  @CsvBindByName
+  private final double share;
 
-  public MarketShareOutput(String vendor, long units, float share) {
+  public MarketShareOutput(String vendor, long units, double share) {
     this.vendor = vendor;
     this.units = units;
     this.share = share;
   }
 
-  public String getVendor() {
-    return vendor;
-  }
-
-  public float getShare() {
+  public double getShare() {
     return share;
   }
 
@@ -38,5 +34,13 @@ public class MarketShareOutput implements RowData<MarketShareOutput> {
 
   public long getUnits() {
     return units;
+  }
+
+  public int compareVendorTo(MarketShareOutput o) {
+    return this.getVendor().compareTo(o.getVendor());
+  }
+
+  public String getVendor() {
+    return vendor;
   }
 }

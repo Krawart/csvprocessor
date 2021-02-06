@@ -1,7 +1,7 @@
 package com.krawart.csvprocessor.utils;
 
-import com.krawart.csvprocessor.exceptions.InputFileNotFoundException;
 import com.krawart.csvprocessor.enums.FileType;
+import com.krawart.csvprocessor.exceptions.InputFileNotFoundException;
 
 import java.io.File;
 import java.util.Arrays;
@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-import static com.krawart.csvprocessor.Application.INPUT_DIRECTORY_PATH;
+import static com.krawart.csvprocessor.utils.FileIOUtils.INPUT_DIRECTORY_PATH;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 public class ApplicationProperties {
