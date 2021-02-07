@@ -1,5 +1,6 @@
 package com.krawart.csvprocessor.enums;
 
+@SuppressWarnings("ALL")
 public enum Quarter {
   Q1,
   Q2,

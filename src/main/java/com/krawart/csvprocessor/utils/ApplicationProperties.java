@@ -1,7 +1,7 @@
 package com.krawart.csvprocessor.utils;
 
-import com.krawart.csvprocessor.exceptions.InputFileNotFoundException;
 import com.krawart.csvprocessor.enums.FileType;
+import com.krawart.csvprocessor.exceptions.InputFileNotFoundException;
 
 import java.io.File;
 import java.util.Arrays;
@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-import static com.krawart.csvprocessor.Application.INPUT_DIRECTORY_PATH;
+import static com.krawart.csvprocessor.utils.FileIOUtils.INPUT_DIRECTORY_PATH;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 public class ApplicationProperties {
@@ -39,12 +39,11 @@ public class ApplicationProperties {
     if (Objects.nonNull(fileTypeSpec)) {
       FileType type;
       try {
-        type = FileType.valueOf(fileTypeSpec.toLowerCase());
+        type = FileType.valueOf(fileTypeSpec.toUpperCase());
       } catch (IllegalArgumentException e) {
         exitWithMessageAndStatusCode(
           "FileType (" + properties.get("fileType") + ") is not in supported\n" +
-            "Supported values: " + Arrays.toString(FileType.values()),
-          1);
+            "Supported values: " + Arrays.toString(FileType.values()));
         return;
       }
       this.fileType = type;
@@ -62,21 +61,9 @@ public class ApplicationProperties {
     }
   }
 
-  private static void exitWithMessageAndStatusCode(String message, int exitCode) {
+  private static void exitWithMessageAndStatusCode(String message) {
     logger.warning(message);
-    System.exit(exitCode);
-  }
-
-  public static boolean getIntegerValue(String strNum) {
-    if (strNum == null) {
-      return false;
-    }
-    try {
-      Integer.parseInt(strNum);
-    } catch (NumberFormatException nfe) {
-      return false;
-    }
-    return true;
+    System.exit(-1);
   }
 
   public static ApplicationProperties ofArgs(String[] args) {
@@ -87,8 +74,7 @@ public class ApplicationProperties {
     ApplicationProperties properties = getApplicationProperties(args);
     if (!isCsvFileName(properties.filename)) {
       exitWithMessageAndStatusCode(
-        "Filename (" + properties.filename + ") is not in correct format => 'your-file-name.csv'",
-        1);
+        "Filename (" + properties.filename + ") is not in correct format => 'your-file-name.csv'");
     }
     return properties;
   }
@@ -101,7 +87,7 @@ public class ApplicationProperties {
       if (keyAndValue.length == 2) {
         properties.put(keyAndValue[ 0 ], keyAndValue[ 1 ]);
       } else {
-        exitWithMessageAndStatusCode("Invalid argument specification given on index " + i + ".", 1);
+        exitWithMessageAndStatusCode("Invalid argument specification given on index " + i + ".");
       }
     }
 

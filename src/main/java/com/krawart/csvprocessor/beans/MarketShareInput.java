@@ -4,9 +4,9 @@ import com.krawart.csvprocessor.csv.converters.QuarterConverter;
 import com.krawart.csvprocessor.csv.pojos.Timescale;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
-import com.opencsv.bean.CsvNumber;
 
-public class MarketShare implements CsvBean<MarketShare> {
+@SuppressWarnings("unused")
+public class MarketShareInput implements CsvBean<MarketShareInput> {
 
   @CsvBindByName(column = "Country")
   private String country;
@@ -17,14 +17,14 @@ public class MarketShare implements CsvBean<MarketShare> {
   @CsvBindByName(column = "Vendor")
   private String vendor;
 
-  @CsvBindByName(column = "Units") //FIXME = read all numbers from string as int
-  private int units;
+  @CsvBindByName(column = "Units")
+  private String units;
 
   public String getCountry() {
     return country;
   }
 
-  public Timescale getQuarter() {
+  public Timescale getTimescale() {
     return timescale;
   }
 
@@ -32,7 +32,7 @@ public class MarketShare implements CsvBean<MarketShare> {
     return vendor;
   }
 
-  public int getUnits() {
+  public String getUnits() {
     return units;
   }
 }

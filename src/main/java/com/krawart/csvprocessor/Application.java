@@ -1,31 +1,26 @@
 package com.krawart.csvprocessor;
 
-import com.krawart.csvprocessor.beans.CsvBean;
+import com.krawart.csvprocessor.enums.Quarter;
 import com.krawart.csvprocessor.processing.CsvBeanProcessor;
 import com.krawart.csvprocessor.processing.impl.MarketShareCsvProcessor;
-import com.krawart.csvprocessor.csv.rows.DataRow;
 import com.krawart.csvprocessor.utils.ApplicationProperties;
 
-import java.io.File;
 import java.util.logging.Logger;
 
 public class Application {
-  /*
-   * APPLICATION SETTINGS
-   * */
-  private static final String ABSOLUTE_PATH = new File("").getAbsolutePath();
-  public static final String INPUT_DIRECTORY_PATH = ABSOLUTE_PATH + "/input/";
-  public static final String OUTPUT_DIRECTORY_PATH = ABSOLUTE_PATH + "/output/";
   private static final Logger log = Logger.getLogger(Application.class.getName());
 
   public static void main(String[] args) {
-    System.out.println(INPUT_DIRECTORY_PATH);
     ApplicationProperties properties = ApplicationProperties.ofArgs(args);
 
-    CsvBeanProcessor<? extends CsvBean<?>, ? extends DataRow> converter;
+    CsvBeanProcessor<?, ?> converter;
     switch (properties.getDataType()) {
       case 0:
-        converter = new MarketShareCsvProcessor();
+        converter = new MarketShareCsvProcessor(
+          "Czech Republic",
+          2010,
+          Quarter.Q4
+        );
         break;
       case 1:
         /*
