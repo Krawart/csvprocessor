@@ -6,7 +6,7 @@ mind.
 ## How to use it
 
 By default, the program will try to read data.csv from the input folder and convert it to filtered and sorted CSV saved
-to the output folder at the end.
+to the output folder at the end. If you build standalone .jar file - input folder, output folder and template.html must be beside the jar.
 
 ### Supported application props
 
