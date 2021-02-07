@@ -79,7 +79,7 @@ public class MarketShareCsvProcessor extends CsvBeanProcessor<MarketShareInput, 
       HtmlUtils.appendTdElement(bodyBuilder, i + 1);
       HtmlUtils.appendTdElement(bodyBuilder, item.getVendor());
       HtmlUtils.appendTdElement(bodyBuilder, NumberUtils.THOUSANDS_FORMATTER.format(item.getUnits()));
-      HtmlUtils.appendTdElement(bodyBuilder, NumberUtils.PERCENTAGE_FORMATTER.format(item.getShare() * 100));
+      HtmlUtils.appendTdElement(bodyBuilder, NumberUtils.PERCENTAGE_FORMATTER.format(item.getShare() * 100) + "%");
       bodyBuilder.append("</tr>");
 
       total += item.getUnits();
