@@ -6,8 +6,10 @@ import com.krawart.csvprocessor.exceptions.WriteOperationException;
 
 import java.io.*;
 import java.time.Instant;
+import java.util.Objects;
 
 public interface FileIOUtils {
+  String DEFAULT_FILENAME = "data.csv";
   String ABSOLUTE_PATH = new File("").getAbsolutePath();
   String INPUT_DIRECTORY_PATH = ABSOLUTE_PATH + "/input/";
   String OUTPUT_DIRECTORY_PATH = ABSOLUTE_PATH + "/output/";
@@ -58,6 +60,13 @@ public interface FileIOUtils {
      * */
     String name = filename.substring(0, filename.length() - 4);
 
-    return now + name + fileType.getType();
+    return now + "_" + name + fileType.getType();
+  }
+
+  static String getFilename(String filename) {
+    if (Objects.isNull(filename) || filename.isBlank()) {
+      return DEFAULT_FILENAME;
+    }
+    return filename;
   }
 }

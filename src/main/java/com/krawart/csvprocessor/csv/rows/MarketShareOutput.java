@@ -24,6 +24,25 @@ public class MarketShareOutput implements RowData<MarketShareOutput> {
     return share;
   }
 
+  @SuppressWarnings("unused")
+  public int compareVendorTo(MarketShareOutput o) {
+    return this.getVendor().compareTo(o.getVendor());
+  }
+
+  public String getVendor() {
+    return vendor;
+  }
+
+  /**
+   * Is alternative method to default compareTo method
+   *
+   * @param o Another object of the same type
+   * @return Integer used to sort
+   */
+  public int compareUnitsTo(MarketShareOutput o) {
+    return this.compareTo(o);
+  }
+
   @Override
   public int compareTo(MarketShareOutput o) {
     if (this.getUnits() < o.getUnits()) {
@@ -36,15 +55,6 @@ public class MarketShareOutput implements RowData<MarketShareOutput> {
 
   public long getUnits() {
     return units;
-  }
-
-  @SuppressWarnings("unused")
-  public int compareVendorTo(MarketShareOutput o) {
-    return this.getVendor().compareTo(o.getVendor());
-  }
-
-  public String getVendor() {
-    return vendor;
   }
 
   @Override

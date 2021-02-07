@@ -8,6 +8,7 @@ import com.krawart.csvprocessor.exceptions.InputFileNotFoundException;
 import com.krawart.csvprocessor.exceptions.UnsupportedPropertyInApplicationPropertiesException;
 import com.krawart.csvprocessor.exceptions.WriteOperationException;
 import com.krawart.csvprocessor.utils.ApplicationProperties;
+import com.krawart.csvprocessor.utils.FileIOUtils;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.StatefulBeanToCsv;
@@ -16,17 +17,14 @@ import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import java.io.*;
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Logger;
 
 import static com.krawart.csvprocessor.utils.FileIOUtils.INPUT_DIRECTORY_PATH;
 import static com.krawart.csvprocessor.utils.FileIOUtils.OUTPUT_DIRECTORY_PATH;
 
 public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R>> {
-  private static final String DEFAULT_FILENAME = "data.csv";
   private static final String EXPORT_NOT_IMPLEMENTED = " was almost created.\nDefault export not implemented yet.\n";
   protected final Logger log = Logger.getLogger(this.getClass().getName());
   protected final Class<T> beanType;
@@ -72,7 +70,7 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R
 
     if (status == 0) {
       log.info("Data was exported to " + OUTPUT_DIRECTORY_PATH +
-        getOutputFilename(filename, properties.getFileType()));
+        FileIOUtils.getOutputFilename(filename, properties.getFileType()));
     }
 
     return status;
@@ -85,7 +83,7 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R
    * @return List of beans - raw data from csv
    */
   private List<T> readAll(String filenameFromProperties) {
-    String filename = getFilename(filenameFromProperties);
+    String filename = FileIOUtils.getFilename(filenameFromProperties);
 
     log.info("Reading file from " + INPUT_DIRECTORY_PATH + " directory.");
 
@@ -110,7 +108,8 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R
    * @return Exit Status code;
    */
   protected int exportToCsv(List<R> analyzedBeans, String filename) {
-    String uri = OUTPUT_DIRECTORY_PATH + getOutputFilename(filename, FileType.CSV);
+    String uri = OUTPUT_DIRECTORY_PATH +
+      FileIOUtils.getOutputFilename(filename, FileType.CSV);
     try {
       Writer writer = new FileWriter(uri);
       StatefulBeanToCsv<R> beanToCsv = new StatefulBeanToCsvBuilder<R>(writer).build();
@@ -133,7 +132,8 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R
   protected int exportToHtml(List<R> analyzedBeans, String filename) {
     String dataToPrint = Arrays.toString(analyzedBeans.toArray());
     log.info(dataToPrint);
-    log.info("\nHtml file with name " + getOutputFilename(filename, FileType.XLSX) + EXPORT_NOT_IMPLEMENTED);
+    log.info("\nHtml file with name " +
+      FileIOUtils.getOutputFilename(filename, FileType.XLSX) + EXPORT_NOT_IMPLEMENTED);
     return 1; // TODO = default implementation is missing
   }
 
@@ -147,7 +147,8 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R
   protected int exportToXls(List<R> analyzedBeans, String filename) {
     String dataToPrint = Arrays.toString(analyzedBeans.toArray());
     log.info(dataToPrint);
-    log.info("\nXls file with name " + getOutputFilename(filename, FileType.XLS) + EXPORT_NOT_IMPLEMENTED);
+    log.info("\nXls file with name " +
+      FileIOUtils.getOutputFilename(filename, FileType.XLS) + EXPORT_NOT_IMPLEMENTED);
     return 1; // TODO = default implementation is missing
   }
 
@@ -160,25 +161,8 @@ public abstract class CsvBeanProcessor<T extends CsvBean<T>, R extends RowData<R
   protected int exportToXlsx(List<R> analyzedBeans, String filename) {
     String dataToPrint = Arrays.toString(analyzedBeans.toArray());
     log.info(dataToPrint);
-    log.info("\nXlsx file with name " + getOutputFilename(filename, FileType.XLSX) + EXPORT_NOT_IMPLEMENTED);
+    log.info("\nXlsx file with name " +
+      FileIOUtils.getOutputFilename(filename, FileType.XLSX) + EXPORT_NOT_IMPLEMENTED);
     return 1; // TODO = default implementation is missing
-  }
-
-  private String getOutputFilename(String filename, FileType fileType) {
-    Instant now = Instant.now();
-
-    /*
-     * Filename has .csv suffix and we want to replace it with our new file suffix
-     * */
-    String name = filename.substring(0, filename.length() - 4);
-
-    return now + "_" + name + fileType.getType();
-  }
-
-  private String getFilename(String filename) {
-    if (Objects.isNull(filename) || filename.isBlank()) {
-      return DEFAULT_FILENAME;
-    }
-    return filename;
   }
 }

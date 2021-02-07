@@ -16,7 +16,11 @@ public class Application {
     CsvBeanProcessor<?, ?> converter;
     switch (properties.getDataType()) {
       case 0:
-        converter = new MarketShareCsvProcessor("Czech Republic", 2010, Quarter.Q4);
+        converter = new MarketShareCsvProcessor(
+          "Czech Republic",
+          2010,
+          Quarter.Q4
+        );
         break;
       case 1:
         /*

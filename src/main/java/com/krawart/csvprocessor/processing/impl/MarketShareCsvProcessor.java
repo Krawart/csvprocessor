@@ -6,14 +6,19 @@ import com.krawart.csvprocessor.enums.Quarter;
 import com.krawart.csvprocessor.processing.CsvBeanProcessor;
 import com.krawart.csvprocessor.utils.FileIOUtils;
 import com.krawart.csvprocessor.utils.HtmlUtils;
+import com.krawart.csvprocessor.utils.NumberUtils;
 
-import java.text.DecimalFormat;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MarketShareCsvProcessor extends CsvBeanProcessor<MarketShareInput, MarketShareOutput> {
+  /**
+   * Comparator used to sort output result
+   */
+  private final Comparator<MarketShareOutput> comparator = MarketShareOutput::compareUnitsTo;
 
   private final String country;
   private final int year;
@@ -21,6 +26,8 @@ public class MarketShareCsvProcessor extends CsvBeanProcessor<MarketShareInput, 
 
   /**
    * Filter parameters = should be refactored to be parsed as runtime arguments
+   * Sorting logic is defined with private variable comparator = can be changed in another implementation or can be
+   * refactored to use runtime arguments
    *
    * @param country filter results by country
    * @param year    filter results by year
@@ -55,26 +62,24 @@ public class MarketShareCsvProcessor extends CsvBeanProcessor<MarketShareInput, 
 
     bodyBuilder.append("<table>");
     bodyBuilder.append("<thead>");
-    bodyBuilder.append("<th></th>");
-    bodyBuilder.append("<th>Vendor</th>");
-    bodyBuilder.append("<th>Units</th>");
-    bodyBuilder.append("<th>Share</th>");
+    HtmlUtils.appendThElement(bodyBuilder, "");
+    HtmlUtils.appendThElement(bodyBuilder, "Vendor");
+    HtmlUtils.appendThElement(bodyBuilder, "Units");
+    HtmlUtils.appendThElement(bodyBuilder, "Share");
     bodyBuilder.append("</thead>");
 
     bodyBuilder.append("<tbody>");
 
     Long total = 0L;
     MarketShareOutput item;
-    DecimalFormat percentage = new DecimalFormat("###.00");
-    DecimalFormat thousands = new DecimalFormat("###,###");
     for (int i = 0; i < analyzedBeans.size(); i++) {
       item = analyzedBeans.get(i);
 
       bodyBuilder.append("<tr>");
       HtmlUtils.appendTdElement(bodyBuilder, i + 1);
       HtmlUtils.appendTdElement(bodyBuilder, item.getVendor());
-      HtmlUtils.appendTdElement(bodyBuilder, thousands.format(item.getUnits()));
-      HtmlUtils.appendTdElement(bodyBuilder, percentage.format(item.getShare() * 100));
+      HtmlUtils.appendTdElement(bodyBuilder, NumberUtils.THOUSANDS_FORMATTER.format(item.getUnits()));
+      HtmlUtils.appendTdElement(bodyBuilder, NumberUtils.PERCENTAGE_FORMATTER.format(item.getShare() * 100));
       bodyBuilder.append("</tr>");
 
       total += item.getUnits();
@@ -83,8 +88,9 @@ public class MarketShareCsvProcessor extends CsvBeanProcessor<MarketShareInput, 
     bodyBuilder.append("<tr style='background: #FFFF99'>");
     HtmlUtils.appendTdElement(bodyBuilder, "");
     HtmlUtils.appendTdElement(bodyBuilder, "Total");
-    HtmlUtils.appendTdElement(bodyBuilder, thousands.format(total));
-    HtmlUtils.appendTdElement(bodyBuilder, (100 + "%")); // Sum of all shares
+    HtmlUtils.appendTdElement(bodyBuilder, NumberUtils.THOUSANDS_FORMATTER.format(total));
+    // Sum of all shares as constant. Sum of calculated shares would result to distorted result
+    HtmlUtils.appendTdElement(bodyBuilder, (100 + "%"));
     bodyBuilder.append("</tr>");
 
     bodyBuilder.append("</tbody>");
@@ -149,11 +155,7 @@ public class MarketShareCsvProcessor extends CsvBeanProcessor<MarketShareInput, 
         long units = entry.getValue();
         return new MarketShareOutput(vendor, units, getShare(units, totalUnits));
       })
-      /*
-       * Can be used instead default compareTo comparator
-       * */
-//      .sorted(MarketShareOutput::compareVendorTo)
-      .sorted()
+      .sorted(comparator)
       .collect(Collectors.toList());
   }
 
