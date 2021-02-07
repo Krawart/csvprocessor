@@ -1,12 +1,16 @@
 package com.krawart.csvprocessor;
 
 import com.krawart.csvprocessor.enums.Quarter;
-import com.krawart.csvprocessor.processing.CsvBeanProcessor;
-import com.krawart.csvprocessor.processing.impl.MarketShareCsvProcessor;
+import com.krawart.csvprocessor.processors.CsvBeanProcessor;
+import com.krawart.csvprocessor.processors.impl.MarketShareCsvProcessor;
 import com.krawart.csvprocessor.utils.ApplicationProperties;
 
 import java.util.logging.Logger;
 
+/**
+ * Application to convert CSV data to analyze data and export theme to different formats
+ *
+ */
 public class Application {
   private static final Logger log = Logger.getLogger(Application.class.getName());
 

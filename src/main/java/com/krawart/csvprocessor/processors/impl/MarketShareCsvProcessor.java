@@ -1,9 +1,9 @@
-package com.krawart.csvprocessor.processing.impl;
+package com.krawart.csvprocessor.processors.impl;
 
-import com.krawart.csvprocessor.beans.MarketShareInput;
-import com.krawart.csvprocessor.csv.rows.MarketShareOutput;
+import com.krawart.csvprocessor.csv.input.MarketShareInput;
+import com.krawart.csvprocessor.csv.output.MarketShareOutput;
 import com.krawart.csvprocessor.enums.Quarter;
-import com.krawart.csvprocessor.processing.CsvBeanProcessor;
+import com.krawart.csvprocessor.processors.CsvBeanProcessor;
 import com.krawart.csvprocessor.utils.FileIOUtils;
 import com.krawart.csvprocessor.utils.HtmlUtils;
 import com.krawart.csvprocessor.utils.NumberUtils;

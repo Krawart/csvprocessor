@@ -1,4 +1,4 @@
-package com.krawart.csvprocessor.beans;
+package com.krawart.csvprocessor.csv.input;
 
 import com.krawart.csvprocessor.csv.converters.QuarterConverter;
 import com.krawart.csvprocessor.csv.pojos.Timescale;

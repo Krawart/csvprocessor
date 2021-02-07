@@ -1,4 +1,4 @@
-package com.krawart.csvprocessor.csv.rows;
+package com.krawart.csvprocessor.csv.output;
 
 import com.opencsv.bean.CsvBindByName;
 

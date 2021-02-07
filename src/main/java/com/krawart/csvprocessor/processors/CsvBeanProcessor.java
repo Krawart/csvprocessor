@@ -1,7 +1,7 @@
-package com.krawart.csvprocessor.processing;
+package com.krawart.csvprocessor.processors;
 
-import com.krawart.csvprocessor.beans.CsvBean;
-import com.krawart.csvprocessor.csv.rows.RowData;
+import com.krawart.csvprocessor.csv.input.CsvBean;
+import com.krawart.csvprocessor.csv.output.RowData;
 import com.krawart.csvprocessor.enums.FileType;
 import com.krawart.csvprocessor.exceptions.CsvDataMappingException;
 import com.krawart.csvprocessor.exceptions.InputFileNotFoundException;
